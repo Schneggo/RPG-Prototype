@@ -66,7 +66,7 @@ public class PlayerMovementNetwork : NetworkBehaviour
             Sprinting();
         }
 
-        MouseLook();
+        CameraLook();
     }
 
     private void Movement()
@@ -74,6 +74,17 @@ public class PlayerMovementNetwork : NetworkBehaviour
         Vector2 movement = input.Player.Movement.ReadValue<Vector2>();
         var move = transform.right * movement.x + transform.forward * movement.y;
         controller.Move(move * moveSpeed * Time.deltaTime);
+
+        playerVelocity.y += gravity * Time.deltaTime;
+
+        controller.Move(playerVelocity * Time.deltaTime);
+    }
+
+    private void Sprinting()
+    {
+        Vector2 movement = input.Player.Movement.ReadValue<Vector2>();
+        var move = transform.right * movement.x + transform.forward * movement.y;
+        controller.Move(move * runSpeed * Time.deltaTime);
 
         playerVelocity.y += gravity * Time.deltaTime;
 
@@ -90,7 +101,7 @@ public class PlayerMovementNetwork : NetworkBehaviour
         }
     }
 
-    private void MouseLook()
+    private void CameraLook()
     {
         Vector2 mouse = input.Player.Mouse.ReadValue<Vector2>();
 
@@ -104,16 +115,5 @@ public class PlayerMovementNetwork : NetworkBehaviour
 
         cam.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         playerBody.Rotate(Vector3.up * mouseX);
-    }
-
-    private void Sprinting()
-    {
-        Vector2 movement = input.Player.Movement.ReadValue<Vector2>();
-        var move = transform.right * movement.x + transform.forward * movement.y;
-        controller.Move(move * runSpeed * Time.deltaTime);
-
-        playerVelocity.y += gravity * Time.deltaTime;
-
-        controller.Move(playerVelocity * Time.deltaTime);
     }
 }
