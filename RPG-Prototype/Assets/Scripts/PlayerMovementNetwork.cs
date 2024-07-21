@@ -19,6 +19,8 @@ public class PlayerMovementNetwork : NetworkBehaviour
     [SerializeField] private float jumpHeight = 1f;
     [SerializeField] private float gravity = -9.81f;
 
+    [SerializeField] private bool isSprinting = false;
+
     [Header("Mouse")]
     [SerializeField] private float sensX = 5f;
     [SerializeField] private float sensY = 5f;
@@ -37,13 +39,33 @@ public class PlayerMovementNetwork : NetworkBehaviour
         input.Player.Enable();
 
         input.Player.Jump.performed += Jump;
+        input.Player.SprintingStart.performed += SprintStart;
+        input.Player.SprintingFinish.performed += SprintFinish;
+    }
+
+    private void SprintStart(InputAction.CallbackContext obj)
+    {
+        isSprinting = true;
+    }
+
+    private void SprintFinish(InputAction.CallbackContext obj)
+    {
+        isSprinting = false;
     }
 
     private void Update()
     {
         if (!IsOwner) return;
 
-        Movement();
+        if (!isSprinting)
+        {
+            Movement();
+        }
+        else
+        {
+            Sprinting();
+        }
+
         MouseLook();
     }
 
@@ -82,5 +104,16 @@ public class PlayerMovementNetwork : NetworkBehaviour
 
         cam.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         playerBody.Rotate(Vector3.up * mouseX);
+    }
+
+    private void Sprinting()
+    {
+        Vector2 movement = input.Player.Movement.ReadValue<Vector2>();
+        var move = transform.right * movement.x + transform.forward * movement.y;
+        controller.Move(move * runSpeed * Time.deltaTime);
+
+        playerVelocity.y += gravity * Time.deltaTime;
+
+        controller.Move(playerVelocity * Time.deltaTime);
     }
 }
