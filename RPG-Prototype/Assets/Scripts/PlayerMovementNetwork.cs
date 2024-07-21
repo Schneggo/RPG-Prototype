@@ -25,6 +25,7 @@ public class PlayerMovementNetwork : NetworkBehaviour
     [SerializeField] private float sensX = 5f;
     [SerializeField] private float sensY = 5f;
 
+    [SerializeField] private GameObject camHolder;
     [SerializeField] private Camera cam;
 
     private float xRotation;
@@ -32,6 +33,9 @@ public class PlayerMovementNetwork : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (!IsOwner) return;
+        camHolder.SetActive(true);
+
         input = new PlayerInputActions();
         playerInput = GetComponent<PlayerInput>();
         controller = GetComponent<CharacterController>();
