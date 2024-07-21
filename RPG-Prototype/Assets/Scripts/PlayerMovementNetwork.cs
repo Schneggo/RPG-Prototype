@@ -41,6 +41,8 @@ public class PlayerMovementNetwork : NetworkBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         Movement();
         MouseLook();
     }
@@ -58,7 +60,8 @@ public class PlayerMovementNetwork : NetworkBehaviour
 
     private void Jump(InputAction.CallbackContext obj)
     {
-        Debug.Log("Jump");
+        if (!IsOwner) return;
+
         if (controller.isGrounded)
         {
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
