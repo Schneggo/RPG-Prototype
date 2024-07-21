@@ -41,6 +41,9 @@ public class PlayerMovementNetwork : NetworkBehaviour
         input.Player.Jump.performed += Jump;
         input.Player.SprintingStart.performed += SprintStart;
         input.Player.SprintingFinish.performed += SprintFinish;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void SprintStart(InputAction.CallbackContext obj)
